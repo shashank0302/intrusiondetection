@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package intrusion;
+
+option go_package = "github.com/shashank/intrusiondetection/proto";
+
+// IntrusionDetectionService handles log streaming for intrusion detection
+service IntrusionDetectionService {
+  // StreamLogs enables bi-directional streaming of log data
+  // Client streams LogRequest, server responds with LogResponse
+  rpc StreamLogs(stream LogRequest) returns (stream LogResponse);
+}
+
+// LogRequest represents incoming log data for analysis
+message LogRequest {
+  string ip_address = 1;   // Source IP address
+  bytes payload = 2;       // Raw payload data
+  int64 timestamp = 3;     // Unix timestamp in nanoseconds
+  string signature = 4;    // HMAC-SHA256 hash for integrity verification
+}
+
+// LogResponse contains the detection result
+message LogResponse {
+  string status = 1;   // "ALLOWED", "BLOCKED_RATE_LIMIT", "BLOCKED_INVALID_SIG"
+  string message = 2;  // Human-readable explanation
+}
